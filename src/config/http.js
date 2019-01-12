@@ -6,7 +6,7 @@ import router from '../router'
 import { aesencode }  from './utils';
 // axios 配置
 axios.defaults.timeout = 30000;
-axios.defaults.baseURL = baseUrl
+axios.defaults.baseURL = baseUrl+'/api'
 
 // http request 拦截器
 axios.interceptors.request.use(
@@ -30,22 +30,22 @@ axios.interceptors.request.use(
 // http response 拦截器
 axios.interceptors.response.use(
   response => {
-    return response;
+    return response.data;
   },
   error => {
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          store.commit(types.LOGOUT);
-          router.replace({
-            path: 'login',
-            query: {redirect: router.currentRoute.fullPath}
-          });
-      }
+  if (error.response) {
+    switch (error.response.status) {
+      case 401:
+        store.commit(types.LOGOUT);
+        router.replace({
+          path: 'login',
+          query: {redirect: router.currentRoute.fullPath}
+        });
     }
-    console.log(error)
-    return Promise.reject(error.response.data);
-  });
+  }
+  console.log(error)
+  return Promise.reject(error.response.data);
+});
 
 export default axios;
 

@@ -40,4 +40,7 @@
     overflow-x: hidden;
     overflow-y: auto;
   }
+  .red{
+    color: #ef4300;
+  }
 </style>

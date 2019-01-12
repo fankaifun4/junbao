@@ -1,5 +1,5 @@
 <style scoped lang='less'>
-  .assessment{
+  .assessment {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -7,14 +7,15 @@
     overflow-y: auto;
     .top-container {
       flex-shrink: 0;
-      height: 360px;
+      padding-top: 50px;
       background: url("../../assets/banner.png") top;
       background-size: 100%;
       background-repeat: no-repeat;
+      overflow: hidden;
     }
 
     .nav-tab {
-      height: 112px;
+      height: 110px;
       width: 100%;
       font-size: 28px;
       font-weight: normal;
@@ -27,105 +28,124 @@
       .ofhidden {
         overflow: hidden;
         overflow-x: auto;
-      }
-      .quarter-wrap {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 56px;
-        > .quarter-item {
-          width: 148px;
-          height: 56px;
-          height: inherit;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          color: #fff;
-          &.current {
-            color: #FF3015;
-            background: #fff;
-            border-radius: 28px;
-          }
-        }
-      }
-      .month-wrap {
-        overflow: hidden;
-        width: 100%;
-        height: 52px;
-        padding: 0 28px;
-        .nav-item-wrap {
-          height: 52px;
-          display: flex;
-        }
-        .nav-item {
-          width: 96px;
-          height: 52px;
-          overflow: hidden;
-          text-align: center;
-          line-height: 52px;
-          color: #fff;
-          margin-right: 7px;
-          &:last-child {
-            margin-right: 0;
-          }
-          &.active-nav {
-            color: #ff4f25;
-            background: #fff;
-            border-radius: 26px;
-          }
-        }
+        color: #fff;
       }
     }
-    .no-data {
+    .userinfo {
+      width: 700px;
+      height: 260px;
+      border-radius: 6px;
+      box-shadow: 0 0 8px 1px rgba(0, 0, 0, .1);
+      background: #ffffff;
+      margin: 15px auto;
       display: flex;
-      flex-shrink: 0;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
-      flex-direction: column;
-      font-size: 28px;
-      color: #999;
-      position: absolute;
-      width:300px;
-      height: 300px;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      top: 0;
-      margin:auto;
-      .no-assessment{
-        width:196px;
-        height: 196px;
-        background: url("../../assets/no-data.png") no-repeat;
-        background-size: 100% 100%;
-        margin-bottom:10px;
+      padding-left: 80px;
+      .avart {
+        width: 150px;
+        height: 150px;
+        img {
+          width: 150px;
+          height: 150px;
+        }
+        margin-right: 50px;
+      }
+      .user-type {
+        font-size: 32px;
+      }
+      .user-level {
+        font-size: 40px;
+        color: #333;
+        font-weight: 600;
+        text-shadow: 0 2px 1px rgba(255, 215, 0, .4);
       }
     }
   }
 
+  .footer-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .content-blok {
+    width: 700px;
+    border-radius: 6px 6px;
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, .1);
+    overflow: hidden;
+    font-size: 28px;
+    .block-title {
+      padding: 24px 32px;
+      background: #ef4300;
+      color: #fff;
+      text-align: left;
+    }
+    .block-body {
+      padding: 24px 32px;
+      .types{
+        font-size: 30px;
+        text-align: left;
+        border-bottom: 5px solid #FF0543;
+        padding-bottom: 14px;
+      }
+      .line-block{
+        text-align: left;
+        padding:18px 10px;
+        font-size: 32px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #eee;
+        &:last-child{
+          border-bottom: none;
+        }
+      }
+    }
+  }
 </style>
 <template>
   <div class="assessment">
     <div class="top-container">
-      <div class="nav-tab">
-        <div class="month-wrap">
-          <div class="ofhidden" >
-            asdasdasdas
-          </div>
+      <div class="userinfo">
+        <div class="avart">
+          <img src="../../assets/icon/man.png" alt="">
         </div>
-        <div class="mun-content" >
+        <div>
+          <h4 class="user-type"> {{userInfo.name}}</h4>
+          <div class="user-level" v-if="userInfo.type=='agent'"> {{LevelName()}}</div>
+          <div class="user-type">账号：{{userInfo.email}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-body">
+      <div class="content-blok">
+        <div class="block-title">我的产品</div>
+        <div class="block-body">
+          <div>
+            <h4 class="types">俊宝闪充</h4>
+            <div class="line-block">总营业额<span class="red">{{totalNum.all_money }}</span></div>
+            <div class="line-block">总设备数<span class="red">{{totalNum.total_devices_num}}</span></div>
+            <div class="line-block">总激活数<span class="red">{{totalNum.total_active_device_num  }}</span></div>
+            <div class="line-block">24小时内激活率<span class="red">{{totalNum.total_recent_active_rate  }}</span> </div>
+            <div class="line-block">近一天使用率<span class="red">{{totalNum.total_recent_use_rate   }}</span></div>
+            <div class="line-block">总使用率 <span class="red">{{totalNum.total_everyday_use_rate  }}</span></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-  import { mapState } from 'vuex'
-  export  default {
-    data(){
+  import {mapState} from 'vuex'
+  import {mertj} from '../../server/junbao'
+
+  export default {
+    data() {
       return {
+        totalNum: {}
       }
     },
-    mounted(){
+    mounted() {
       this.initData()
     },
     computed: {
@@ -133,9 +153,40 @@
         'userInfo'
       ])
     },
-    methods:{
-      initData(){
+    methods: {
+      async initData() {
+        let uid = this.userInfo.id
         console.log(this.userInfo)
+        this.checkToken(async () => {
+          let res = await mertj()
+          if (res.code === 0) {
+            this.totalNum = res.data
+          }
+        })
+      },
+      LevelName() {
+        let level = this.userInfo.level
+        switch (level) {
+          case 1: {
+            return '总代理'
+            break
+          }
+          case 2: {
+            return '一级代理'
+            break
+          }
+          case 3: {
+            return '二级代理'
+            break
+          }
+          case 4: {
+            return '三级代理'
+            break
+          }
+          default:
+            return '运营经理'
+            break
+        }
       }
     }
   }

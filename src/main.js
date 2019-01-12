@@ -6,7 +6,8 @@ import router from './router'
 import store  from './store'
 import './libs/flexible'
 import 'iview/dist/styles/iview.css';
-
+import {checkToken} from './config/ajax'
+Vue.prototype.checkToken = checkToken
 Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({

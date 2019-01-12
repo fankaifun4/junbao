@@ -1,20 +1,50 @@
 <style scoped lang="less">
   .page-container {
-    margin: 220px auto 0 auto;
+    margin: 120px auto 0 auto;
   }
   .logo {
-    font-size: 60px;
+    font-size: 30px;
     font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, .9);
-    color: rgba( 255,215,0,1);
-    background: url("../../assets/logo.png");
-    width:200px;
-    height: 200px;
-    background-size: 100% 100%;
+    width:500px;
     display: flex;
     justify-content: center;
     align-items: center;
     margin:0 auto;
+    .logo-img{
+      background: url("../../assets/logo.png") no-repeat;
+      background-size: 100% 100%;
+      width: 140px;
+      height: 140px;
+      margin-right:20px;
+      flex-shrink: 0;
+    }
+    .text{
+      width:340px;
+      color:#fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, .9);
+      .cn{
+        width: 100%;
+        font-size: 40px;
+        height: 60px;
+        line-height: 60px;
+        text-align:justify;
+        text-justify:inter-ideograph;
+        span {
+            display: inline-block; padding-left: 100%;
+        }
+      }
+      .en{
+        width: 100%;
+        line-height: 40px;
+        font-size:25px;
+        font-weight: 300;
+        height: 40px;
+        text-align:justify;
+        span {
+          display: inline-block; padding-left: 100%;
+        }
+      }
+    }
   }
 
   form {
@@ -24,9 +54,9 @@
 
   input {
     box-sizing: border-box;
-    width: 540px;
-    height: 84px;
-    line-height: 84px;
+    width: 550px;
+    height:80px;
+    line-height:80px;
     margin-top: 50px;
     padding: 0 30px;
     background: rgba(45, 45, 45, .15);
@@ -64,10 +94,10 @@
 
   button {
     cursor: pointer;
-    width: 540px;
-    height: 84px;
+    width: 550px;
+    height:80px;
     padding: 0 15px;
-    line-height: 84px;
+    line-height:80px;
     margin-top: 50px;
     background: #ef4300;
     border-radius: 6px;
@@ -114,7 +144,6 @@
     left: -140%;
     top: 0
   }
-
   .connect a {
     display: inline-block;
     width: 32px;
@@ -136,41 +165,7 @@
     margin: -101px 0 0 -151px;
   }
 
-  .alert h2 {
-    height: 40px;
-    padding-left: 8px;
-    font-size: 14px;
-    background: #FF0543;
-    text-align: left;
-    line-height: 40px;
-  }
-
-  .alert .alert_con {
-    background: #fff;
-    height: 160px;
-  }
-
-  .alert .alert_con p {
-    color: #000;
-    line-height: 90px;
-  }
-
-  .alert .alert_con .btn {
-    padding: 3px 10px;
-    color: #fff;
-    cursor: pointer;
-    background: #72D1FF;
-    border: 1px solid #72D1FF;
-    border-radius: 4px;
-  }
-
-  .alert .alert_con .btn:hover {
-    background: #4FB2EF;
-    border: 1px solid #4FB2EF;
-    border-radius: 4px;
-  }
-
-  .wrapper {
+    .wrapper {
     background: url("../../assets/login/img/1.jpg");
     background-size: cover;
     &.bg1 {
@@ -190,7 +185,13 @@
 <template>
   <div class="wrapper" :class="timeSet">
     <div class="page-container">
-      <h1 class="logo">骏宝</h1>
+        <h1 class="logo">
+          <div  class="logo-img"></div>
+          <div  class="text">
+            <div class="cn">骏宝闪充<span></span></div>
+            <div class="en">Jun Bao Shan Chong<span></span></div>
+          </div>
+        </h1>
         <div>
           <input type="text" name="username" class="username" v-model="email" placeholder="请输入手机号码" autocomplete="off"/>
         </div>
@@ -199,13 +200,6 @@
                  onpaste="return false"/>
         </div>
         <button id="submit" type="button"  @click="login">登录</button>
-    </div>
-    <div class="alert">
-      <h2>消息</h2>
-      <div class="alert_con">
-        <p id="ts"></p>
-        <p style="line-height:70px"><a class="btn">确定</a></p>
-      </div>
     </div>
   </div>
 </template>
@@ -234,32 +228,29 @@
     methods: {
       login(){
         if(!this.email){
-          Message.warning({
-            message: '用户名不能为空'
-          });
+          Message.warning( '用户名不能为空');
           return false;
         }
         if(!this.password){
-          Message.warning({
-            message: '密码不能为空'
-          });
+          Message.warning('密码不能为空');
           return false;
         }
 
         var that = this;
         that.loading = true;
         login(that.email,that.password).then(function (response) {
+          console.log(response)
             that.loading = false;
             var welcome_flag = false;
             var redirect_flag = false;
-            var roles = response.data.user.roles;
+            var roles = response.user.roles;
             var permissions = [];
             for(var i=0; i<roles.length; i++){
               for(var j=0; j<roles[i].permissions.length; j++){
                 permissions.push(roles[i].permissions[j]);
               }
             }
-            //console.log(permissions);
+            console.log(response)
             var redirect = decodeURIComponent(that.$route.query.redirect || '/');
             for(var i=0; i<permissions.length; i++){
               var url = '/' + permissions[i].desc;
@@ -283,14 +274,13 @@
             }
 
             that.$store.dispatch('login', {
-              token: response.data.token,
+              token: response.token,
               permissions: permissions,
               activeIndex: goto_url,
-              userInfo: response.data.user,
-              typeOptions: response.data.ptype,
-              brandOptions: response.data.pbrand
+              userInfo: response.user,
+              typeOptions: response.ptype,
+              brandOptions: response.pbrand
             });
-
             that.$router.push({
               path: goto_url
             })
@@ -298,9 +288,7 @@
           .catch(function (error) {
             that.loading = false;
             if(error && error.error == 'invalid_credentials'){
-              Message.warning({
-                message: '您没有权限登录'
-              });
+              Message.warning( '您没有权限登录');
               return false;
             }
           });

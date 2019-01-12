@@ -11,7 +11,7 @@ function post(url,data){
 function get(url,data){
   return http.request({
     url,
-    data,
+    params: data,
     method:'get',
   })
 }
