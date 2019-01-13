@@ -1,17 +1,38 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/pages/Home'
-import User from '@/pages/User'
-import Turnover from '@/pages/Turnover'
-import Customers from '@/pages/Customers'
-import Login from '@/pages/Login'
+const Index=()=>import(/* webpackChunkName: "Index" */ '@/pages/Index')
+const Home = () => import(/* webpackChunkName: "Home" */ '@/pages/Home')
+const User = () => import(/* webpackChunkName: "User" */ '@/pages/User')
+const Turnover = () => import(/* webpackChunkName: "Turnover" */ '@/pages/Turnover')
+const Customers = () => import(/* webpackChunkName: "Customers" */ '@/pages/Customers')
+const Money = () => import(/* webpackChunkName: "Customers" */ '@/pages/Cashlog')
+const Login = () => import(/* webpackChunkName: "Login" */ '@/pages/Login')
 Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/admin/info',
-      name: 'home',
-      component: Home
+      path:'/',
+      component:Index,
+      children:[
+        {
+          path: '',
+          redirect:'admin/info'
+        },
+        {
+          path: 'admin/info',
+          name: 'home',
+          component: Home
+        },{
+          path: '/admin/myagents',
+          name: 'customers',
+          component: Customers
+        },
+        {
+          path: '/admin/cashlog',
+          name: 'money',
+          component: Money
+        }
+      ]
     },
     {
       path: '/admin/user',
@@ -24,10 +45,6 @@ export default new Router({
       component: Turnover
     },
     {
-      path: '/customers',
-      name: 'customers',
-      component: Customers
-    },{
       path: '/login',
       name: 'login',
       component: Login

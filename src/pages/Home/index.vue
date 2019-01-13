@@ -1,72 +1,66 @@
 <style scoped lang='less'>
-  .assessment {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
-    .top-container {
-      flex-shrink: 0;
-      padding-top: 50px;
-      background: url("../../assets/banner.png") top;
-      background-size: 100%;
-      background-repeat: no-repeat;
-      overflow: hidden;
-    }
 
-    .nav-tab {
-      height: 110px;
-      width: 100%;
-      font-size: 28px;
-      font-weight: normal;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      &.hidden {
-        visibility: hidden;
-      }
-      .ofhidden {
-        overflow: hidden;
-        overflow-x: auto;
-        color: #fff;
-      }
-    }
-    .userinfo {
-      width: 700px;
-      height: 260px;
-      border-radius: 6px;
-      box-shadow: 0 0 8px 1px rgba(0, 0, 0, .1);
-      background: #ffffff;
-      margin: 15px auto;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      padding-left: 80px;
-      .avart {
-        width: 150px;
-        height: 150px;
-        img {
-          width: 150px;
-          height: 150px;
-        }
-        margin-right: 50px;
-      }
-      .user-type {
-        font-size: 32px;
-      }
-      .user-level {
-        font-size: 40px;
-        color: #333;
-        font-weight: 600;
-        text-shadow: 0 2px 1px rgba(255, 215, 0, .4);
-      }
-    }
+  .top-container {
+    flex-shrink: 0;
+    padding-top: 50px;
+    background: url("../../assets/banner.png") top;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    overflow: hidden;
   }
 
+  .nav-tab {
+    height: 110px;
+    width: 100%;
+    font-size: 28px;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &.hidden {
+      visibility: hidden;
+    }
+    .ofhidden {
+      overflow: hidden;
+      overflow-x: auto;
+      color: #fff;
+    }
+  }
+  .userinfo {
+    width: 700px;
+    height: 260px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, .1);
+    background: #ffffff;
+    margin: 15px auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 80px;
+    .avart {
+      width: 150px;
+      height: 150px;
+      img {
+        width: 150px;
+        height: 150px;
+      }
+      margin-right: 50px;
+    }
+    .user-type {
+      font-size: 32px;
+    }
+    .user-level {
+      font-size: 35px;
+      color: #333;
+      font-weight: 600;
+      text-shadow: 0 2px 1px rgba(255, 215, 0, .4);
+    }
+  }
   .footer-body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom:50px;
   }
 
   .content-blok {
@@ -111,8 +105,8 @@
           <img src="../../assets/icon/man.png" alt="">
         </div>
         <div>
-          <h4 class="user-type"> {{userInfo.name}}</h4>
           <div class="user-level" v-if="userInfo.type=='agent'"> {{LevelName()}}</div>
+          <h4 class="user-type"> {{userInfo.name}}</h4>
           <div class="user-type">账号：{{userInfo.email}}</div>
         </div>
       </div>
@@ -122,13 +116,16 @@
         <div class="block-title">我的产品</div>
         <div class="block-body">
           <div>
-            <h4 class="types">俊宝闪充</h4>
-            <div class="line-block">总营业额<span class="red">{{totalNum.all_money }}</span></div>
-            <div class="line-block">总设备数<span class="red">{{totalNum.total_devices_num}}</span></div>
-            <div class="line-block">总激活数<span class="red">{{totalNum.total_active_device_num  }}</span></div>
-            <div class="line-block">24小时内激活率<span class="red">{{totalNum.total_recent_active_rate  }}</span> </div>
-            <div class="line-block">近一天使用率<span class="red">{{totalNum.total_recent_use_rate   }}</span></div>
-            <div class="line-block">总使用率 <span class="red">{{totalNum.total_everyday_use_rate  }}</span></div>
+            <h4 class="types">骏宝闪充</h4>
+            <div class="line-block">我的客户<span class="red">{{myDate.total|| 0 }}</span></div>
+            <div class="line-block">总营业额<span class="red">{{myDate.all_money||0 }}</span></div>
+            <div class="line-block">今日营业额 <span class="red">{{todayTotaol|| 0}}</span></div>
+            <div class="line-block">总设备数<span class="red">{{myDate.total_devices_num||0}}</span></div>
+            <div class="line-block">已绑定设备数<span class="red">{{myDate.total_devices_binded||0}}</span></div>
+            <div class="line-block">设备总激活数<span class="red">{{totalNum.total_active_device_num|| 0  }}</span></div>
+            <div class="line-block">24小时内激活率<span class="red">{{totalNum.total_recent_active_rate ||0 }}</span> </div>
+            <div class="line-block">近一天使用率<span class="red">{{totalNum.total_recent_use_rate  || 0 }}</span></div>
+            <div class="line-block">总使用率 <span class="red">{{totalNum.total_everyday_use_rate || 0  }}</span></div>
           </div>
         </div>
       </div>
@@ -137,12 +134,21 @@
 </template>
 <script>
   import {mapState} from 'vuex'
-  import {mertj} from '../../server/junbao'
-
+  import {mertj,myAgents,getDateData} from '../../server/junbao'
+  import {format} from 'date-fns'
   export default {
     data() {
       return {
-        totalNum: {}
+        totalNum: {},
+        searchData:{
+          role:'',
+          city:'',
+          manid:'',
+          search:''
+        },
+        myDate:{},
+        sevenDate:{},
+        todayTotaol:'0'
       }
     },
     mounted() {
@@ -156,36 +162,34 @@
     methods: {
       async initData() {
         let uid = this.userInfo.id
-        console.log(this.userInfo)
         this.checkToken(async () => {
           let res = await mertj()
-          if (res.code === 0) {
             this.totalNum = res.data
-          }
+        })
+        this.checkToken(async ()=>{
+          let res = await myAgents(0,0,this.searchData)
+          this.myDate = res.data
+        })
+        this.checkToken(async ()=>{
+          let res = await getDateData()
+          this.sevenDate = res.data
+          let today  = format(new Date(),'YYYY-MM-DD')
+
+          Object.keys(this.sevenDate).map(item=>{
+             if(item==today){
+               this.todayTotaol = this.sevenDate[item]
+             }
+          })
         })
       },
       LevelName() {
-        let level = this.userInfo.level
-        switch (level) {
-          case 1: {
-            return '总代理'
-            break
-          }
-          case 2: {
-            return '一级代理'
-            break
-          }
-          case 3: {
-            return '二级代理'
-            break
-          }
-          case 4: {
-            return '三级代理'
-            break
-          }
-          default:
-            return '运营经理'
-            break
+        let type = this.userInfo.type
+        if( type =='manitenance' ){
+            return '市场维护'
+        }else if( type =='agent' ){
+          return '代理商'
+        } else if(type=='operate'){
+          return '运营'
         }
       }
     }

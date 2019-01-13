@@ -10,7 +10,7 @@
   }
 </script>
 
-<style>
+<style lang="less">
   * {
     padding: 0;
     margin: 0;
@@ -40,7 +40,17 @@
     overflow-x: hidden;
     overflow-y: auto;
   }
-  .red{
+
+  .assessment {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .red {
     color: #ef4300;
   }
+
+
 </style>

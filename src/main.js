@@ -7,6 +7,8 @@ import store  from './store'
 import './libs/flexible'
 import 'iview/dist/styles/iview.css';
 import {checkToken} from './config/ajax'
+import filters from './filters'
+Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
 Vue.prototype.checkToken = checkToken
 Vue.config.productionTip = false
 /* eslint-disable no-new */
