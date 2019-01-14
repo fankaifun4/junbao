@@ -64,7 +64,7 @@
     border: 1px solid rgba(255, 255, 255, .15);
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .1) inset;
     font-family: 'PT Sans', Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 32px;
     color: #fff;
     text-shadow: 0 1px 2px rgba(0, 0, 0, .1);
     transition: all .2s;
@@ -239,7 +239,6 @@
         var that = this;
         that.loading = true;
         login(that.email,that.password).then(function (response) {
-          console.log(response)
             that.loading = false;
             var welcome_flag = false;
             var redirect_flag = false;
@@ -250,7 +249,6 @@
                 permissions.push(roles[i].permissions[j]);
               }
             }
-            console.log(response)
             var redirect = decodeURIComponent(that.$route.query.redirect || '/');
             for(var i=0; i<permissions.length; i++){
               var url = '/' + permissions[i].desc;

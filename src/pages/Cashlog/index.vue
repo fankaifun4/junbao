@@ -127,6 +127,11 @@
     z-index: 90;
     background:rgba(0,0,0,0) ;
     transition: all .4s linear;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 32px;
     &.visiable{
       visibility: visible;
       background:rgba(0,0,0,0.6) ;
@@ -139,17 +144,17 @@
       <div class="title">我的账单</div>
       <!--<button class="search" @click="openSearch=!openSearch">搜索</button>-->
     </div>
-    <div class="search-shape" :class="{visiable:loading}"></div>
+    <div class="search-shape" :class="{visiable:loading}">正在操作,请稍后...</div>
     <div class="cash-top">
       <div>
         <div>可用余额</div>
-        <div class="mr-30"><span class="red">{{moneyData.rest_money}}</span>元</div>
+        <div class="mr-30"><span class="red">{{moneyData.rest_money||0}}</span>元</div>
         <div>冻结金额</div>
-        <div><span class="red">{{moneyData.freeze_money}}</span>元</div>
+        <div><span class="red">{{moneyData.freeze_money||0}}</span>元</div>
       </div>
       <div>
         <div>已提现金额</div>
-        <div><span class="green">{{moneyData.take_money}}</span>元</div>
+        <div><span class="green">{{moneyData.take_money||0}}</span>元</div>
       </div>
       <div class="tixian">
         <button class="button" :disabled="this.moneyData.rest_money<=0"
@@ -171,29 +176,32 @@
               @pullingDown="onPullingDown"
               @pullingUp="onPullingUp"
       >
-        <div v-for="(item,index) in list" :key="index" @click="getDetail(item)" class="line-customers">
-          <div class="td">
-            <div>
-              <div class="cell-left">申请人：</div>
-              <div class="black blod">{{item.name}}</div>
-            </div>
-            <div>
-              <div  class="cell-left">银行卡信息：</div>
-              <div  class="black blod">{{item.bank_number||' -- '}}</div>
-            </div>
-            <div>
-              <div  class="cell-left">金额(元)：</div>
-              <div  class="black blod"><span class="red">{{item.money||0}}</span>元</div>
-            </div>
-            <div>
-              <div  class="cell-left"> 审核状态：</div>
-              <div class="blod" :class="item.status == 0 ? 'wait' : item.status == 2 ? 'agree' : 'disagree'">
-                {{item.status == 0 ? '待审核' :item.status == 2 ? '已通过' : '不通过'}}
+        <load-animate v-if="loader"></load-animate>
+        <div>
+          <div v-for="(item,index) in list" :key="index" @click="getDetail(item)" class="line-customers">
+            <div class="td">
+              <div>
+                <div class="cell-left">申请人：</div>
+                <div class="black blod">{{item.name}}</div>
               </div>
-            </div>
-            <div>
-              <div  class="cell-left">申请时间：</div>
-              <div  class="black blod">{{item.updated_at | formatTimeStr('YYYY-MM-DD')}}</div>
+              <div>
+                <div  class="cell-left">银行卡信息：</div>
+                <div  class="black blod">{{item.bank_number||' -- '}}</div>
+              </div>
+              <div>
+                <div  class="cell-left">金额(元)：</div>
+                <div  class="black blod"><span class="red">{{item.money||0}}</span>元</div>
+              </div>
+              <div>
+                <div  class="cell-left"> 审核状态：</div>
+                <div class="blod" :class="item.status == 0 ? 'wait' : item.status == 2 ? 'agree' : 'disagree'">
+                  {{item.status == 0 ? '待审核' :item.status == 2 ? '已通过' : '不通过'}}
+                </div>
+              </div>
+              <div>
+                <div  class="cell-left">申请时间：</div>
+                <div  class="black blod">{{item.updated_at | formatTimeStr('YYYY-MM-DD')}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -204,23 +212,26 @@
 <script>
   import Vue from 'vue'
   import Scroll from '@/components/scroll/scroll'
+  import loadAnimate from '@/components/loadanimate'
   import {moneyTotal, moneyList,takecash} from '../../server/junbao'
   import {Message} from 'iview'
   Vue.use(Message);
   export default {
     components: {
-      Scroll
+      Scroll,
+      loadAnimate
     },
     data () {
       return {
         pageIndex: 1,
-        pageSize: 20,
+        pageSize: 5,
         status: 'all',
         uid: '',
         list:[],
         noData:false,
         moneyData:{},
-        loading:false
+        loading:false,
+        loader:true
       }
     },
     mounted () {
@@ -242,35 +253,44 @@
         let uid = this.$store.state.userInfo.id
         this.uid = uid
         this.checkToken(async () => {
-          let listRes = await  moneyList(uid, this.status, this.pageIndex, this.pageSize)
-          if (listRes.data.data) {
-            this.noData = false
-            let len = listRes.data.data && listRes.data.data.length
-            if (len < this.pageSize) {
-              this._isDestroyed = true
-              if(this.$refs.scroll){
-                this.$nextTick(()=>{
-                  this.$refs.scroll.forceUpdate()
-                })
+          try{
+            let listRes = await  moneyList(uid, this.status, this.pageIndex, this.pageSize)
+            this.loader=false
+            if (listRes.data.data) {
+              this.noData = false
+              let len = listRes.data.data && listRes.data.data.length
+              if (len < this.pageSize) {
+                this._isDestroyed = true
+                if(this.$refs.scroll){
+                  this.$nextTick(()=>{
+                    this.$refs.scroll.forceUpdate()
+                  })
+                }
+                if( this.pageIndex==1 && len<1 ){
+                  this.noData = true
+                }else{
+                  this.noData = false
+                }
               }
-              if( this.pageIndex==1 && len<1 ){
-                this.noData = true
-              }else{
-                this.noData = false
-              }
-            }
 
-            this.list = this.list.concat(listRes.data.data)
-            this.pageIndex += 1
-          } else {
+              this.list = this.list.concat(listRes.data.data)
+              this.pageIndex += 1
+            } else {
+              this.noData = true
+            }
+          }catch (e) {
+            this.loader=false
             this.noData = true
+            alert(e.message)
           }
+
         })
       },
       onPullingDown() {
         this.pageIndex = 1
         this.list = []
         this._isDestroyed = false
+        this.loader=true
         this.getListData()
       },
       onPullingUp() {
@@ -284,7 +304,6 @@
           return
         }
         let alertText = '你申请的提现金额为【'+Number(this.moneyData.rest_money)+'】元,微信支付将扣取到账手续费 【'+(Number(this.moneyData.rest_money)*0.007).toFixed(2)+'】 元,您的实际提现金额为 【'+(Number(this.moneyData.rest_money)-Number(this.moneyData.rest_money)*0.007).toFixed(2)+'】 元'
-
         var isCharge = confirm(alertText)
         if(isCharge) {
           checkToken(async () => {

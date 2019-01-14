@@ -20,3 +20,9 @@ export const moneyList = (uid,status='all',page='1',num='20')=>http.get('/cash/c
 
 //提现
 export const takecash=(money)=>http.post('/cash/takecash',{money,privilege:update})
+
+//管理员接口
+export const admins = (page,num,search,roleid='all')=>http.get('/admins',{page,num,search,roleid,privilege:read})
+
+//人物类型查询
+export const rolesLists=()=>http.get('/roles/lists',{privilege:read})

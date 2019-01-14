@@ -26,6 +26,7 @@
       color: #fff;
     }
   }
+
   .userinfo {
     width: 700px;
     height: 260px;
@@ -56,11 +57,12 @@
       text-shadow: 0 2px 1px rgba(255, 215, 0, .4);
     }
   }
+
   .footer-body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom:50px;
+    margin-bottom: 50px;
   }
 
   .content-blok {
@@ -77,20 +79,20 @@
     }
     .block-body {
       padding: 24px 32px;
-      .types{
+      .types {
         font-size: 30px;
         text-align: left;
         border-bottom: 5px solid #FF0543;
         padding-bottom: 14px;
       }
-      .line-block{
+      .line-block {
         text-align: left;
-        padding:18px 10px;
+        padding: 18px 10px;
         font-size: 32px;
         display: flex;
         justify-content: space-between;
         border-bottom: 1px solid #eee;
-        &:last-child{
+        &:last-child {
           border-bottom: none;
         }
       }
@@ -111,7 +113,8 @@
         </div>
       </div>
     </div>
-    <div class="footer-body">
+    <load-animate v-if="loader"></load-animate>
+    <div v-else class="footer-body">
       <div class="content-blok">
         <div class="block-title">我的产品</div>
         <div class="block-body">
@@ -123,9 +126,9 @@
             <div class="line-block">总设备数<span class="red">{{myDate.total_devices_num||0}}</span></div>
             <div class="line-block">已绑定设备数<span class="red">{{myDate.total_devices_binded||0}}</span></div>
             <div class="line-block">设备总激活数<span class="red">{{totalNum.total_active_device_num|| 0  }}</span></div>
-            <div class="line-block">24小时内激活率<span class="red">{{totalNum.total_recent_active_rate ||0 }}</span> </div>
-            <div class="line-block">近一天使用率<span class="red">{{totalNum.total_recent_use_rate  || 0 }}</span></div>
-            <div class="line-block">总使用率 <span class="red">{{totalNum.total_everyday_use_rate || 0  }}</span></div>
+            <div class="line-block">24小时内激活率<span class="red">{{totalNum.total_recent_active_rate ||0 }}%</span></div>
+            <div class="line-block">近一天使用率<span class="red">{{totalNum.total_recent_use_rate  || 0 }}%</span></div>
+            <div class="line-block">总使用率 <span class="red">{{totalNum.total_everyday_use_rate || 0  }}%</span></div>
           </div>
         </div>
       </div>
@@ -134,21 +137,27 @@
 </template>
 <script>
   import {mapState} from 'vuex'
-  import {mertj,myAgents,getDateData} from '../../server/junbao'
+  import {mertj, myAgents, getDateData} from '../../server/junbao'
+  import loadAnimate from '@/components/loadanimate'
   import {format} from 'date-fns'
+
   export default {
+    components: {
+      loadAnimate
+    },
     data() {
       return {
         totalNum: {},
-        searchData:{
-          role:'',
-          city:'',
-          manid:'',
-          search:''
+        searchData: {
+          role: '',
+          city: '',
+          manid: '',
+          search: ''
         },
-        myDate:{},
-        sevenDate:{},
-        todayTotaol:'0'
+        myDate: {},
+        sevenDate: {},
+        todayTotaol: '0',
+        loader: true
       }
     },
     mounted() {
@@ -163,32 +172,38 @@
       async initData() {
         let uid = this.userInfo.id
         this.checkToken(async () => {
+          this.loader = true
           let res = await mertj()
-            this.totalNum = res.data
+          this.loader = false
+          this.totalNum = res.data
         })
-        this.checkToken(async ()=>{
-          let res = await myAgents(0,0,this.searchData)
+        this.checkToken(async () => {
+          this.loader = true
+          let res = await myAgents(0, 0, this.searchData)
+          this.loader = false
           this.myDate = res.data
         })
-        this.checkToken(async ()=>{
+        this.checkToken(async () => {
+          this.loader = true
           let res = await getDateData()
+          this.loader = false
           this.sevenDate = res.data
-          let today  = format(new Date(),'YYYY-MM-DD')
+          let today = format(new Date(), 'YYYY-MM-DD')
 
-          Object.keys(this.sevenDate).map(item=>{
-             if(item==today){
-               this.todayTotaol = this.sevenDate[item]
-             }
+          Object.keys(this.sevenDate).map(item => {
+            if (item == today) {
+              this.todayTotaol = this.sevenDate[item]
+            }
           })
         })
       },
       LevelName() {
         let type = this.userInfo.type
-        if( type =='manitenance' ){
-            return '市场维护'
-        }else if( type =='agent' ){
+        if (type == 'manitenance') {
+          return '市场维护'
+        } else if (type == 'agent') {
           return '代理商'
-        } else if(type=='operate'){
+        } else if (type == 'operate') {
           return '运营'
         }
       }
