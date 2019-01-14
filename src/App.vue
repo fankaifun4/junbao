@@ -49,8 +49,16 @@
   }
 
   .red {
-    color: #ef4300;
+    color: #ef4300 !important;
   }
-
+  .black {
+    color: #333!important;
+  }
+  .green{
+    color: #090 !important;
+  }
+  .blod{
+    font-weight: 700 !important;
+  }
 
 </style>

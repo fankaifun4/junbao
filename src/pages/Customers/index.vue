@@ -81,17 +81,40 @@
       border-right: 1px solid #ccc;
     }
   }
+  .search-shape{
+    visibility: hidden;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 90;
+    background:rgba(0,0,0,0) ;
+    transition: all .4s linear;
+    &.visiable{
+        visibility: visible;
+      background:rgba(0,0,0,0.6) ;
+    }
+  }
   .search-body {
     position: absolute;
     top: 80px;
-    padding: 24px 32px;
     box-shadow: 0 1px 15px 2px rgba(0,0,0,.1);
     background: #fff;
     z-index: 99;
+    max-height: 0;
+    transition: all .4s linear;
+    overflow: hidden;
+    padding: 0 32px;
+    visibility: hidden;
+    &.visiable{
+      max-height: 600px !important;
+      visibility: visible;
+    }
     > div {
       height: 60px;
       line-height: 60px;
-      margin-bottom:10px;
+      margin:40px 0;
       display: flex;
       justify-content: flex-start;
       align-items: center;
@@ -155,7 +178,8 @@
       <div class="title">我的客户</div>
       <button class="search" @click="openSearch=!openSearch">搜索</button>
     </div>
-    <div class="search-body" v-if="openSearch">
+    <div class="search-shape"  @click="openSearch=false" :class="{visiable:openSearch}"></div>
+    <div class="search-body" :class="{visiable:openSearch}">
       <div>
         <label for="">按类型：</label>
         <i-select placeholder="设备类型" class="select" v-model="searchData.role">
@@ -269,16 +293,18 @@
   </div>
 </template>
 <script>
+  import Vue from 'vue'
   import {myAgents} from '../../server/junbao.js'
   import Scroll from '@/components/scroll/scroll'
-  import Vue from 'vue'
+  import Detail from './detail'
   import {debounce} from 'lodash'
   import {Select, Option} from 'iview'
   Vue.component('i-select', Select);
   Vue.component('i-option', Option);
   export default {
     components: {
-      Scroll
+      Scroll,
+      Detail
     },
     data() {
       return {
