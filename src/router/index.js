@@ -11,24 +11,28 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path:'/',
+      path: "*",
+      redirect: '/login'
+    },
+    {
+      path:'/admin',
       component:Index,
       children:[
         {
           path: '',
-          redirect:'admin/info'
+          redirect:'info'
         },
         {
-          path: 'admin/info',
+          path: 'info',
           name: 'home',
           component: Home
         },{
-          path: '/admin/myagents',
+          path: 'myagents',
           name: 'customers',
           component: Customers
         },
         {
-          path: '/admin/cashlog',
+          path: 'cashlog',
           name: 'money',
           component: Money
         }
@@ -49,9 +53,6 @@ export default new Router({
       name: 'login',
       component: Login
     },
-    {
-      path: "*",
-      redirect: '/login'
-    }
+   
   ]
 })
