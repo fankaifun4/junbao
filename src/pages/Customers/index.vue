@@ -7,7 +7,7 @@
 
   .header {
     padding: 24px 32px;
-    background: #4FB2EF;
+    background: #3388ff;
     color: #fff;
     font-size: 32px;
     position: relative;
@@ -24,7 +24,6 @@
       right: 0;
       width: 140px;
       height: 100%;
-      background: #ff9900;
       color: #fff;
       text-align: right;
       padding: 0 20px;
@@ -44,37 +43,69 @@
 
   .line-customers {
     border-bottom: 1px solid #ccc;
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
     font-size: 28px;
+    padding:10px 0;
     &:nth-child(2n+1) {
-      background: #efefef;
+      background: #f5f5f5;
     }
-    .td {
-      flex: 1;
-      flex-shrink: 0;
-      text-align: left;
+    .title-name{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding:3px 24px;
+      font-size:32px;
+      .cust-name{
+        text-align: left;
+        overflow: hidden;
+        font-weight: 700;
+        padding-right: 20px;
+
+      }
+      .data-num{
+        font-weight: 300;
+        font-size: 28px;
+        padding-left: 50px;
+      }
+      .cust-type{
+        flex-shrink: 0;
+        font-size: 26px;
+        font-weight: 300;
+        background: rgba(51,136,255,1);
+        border-radius: 6px;
+        text-align: center;
+        padding:10px 20px;
+        color: #fff;
+        line-height: 1;
+      }
+    }
+    .tr-body{
       display: flex;
       justify-content: space-between;
       align-items: stretch;
-      padding: 0 20px;
-      flex-direction: column;
-
-      > div {
-        padding: 10px 0;
+      font-size: 26px;
+      padding:0 24px;
+      .td {
+        flex-shrink: 0;
+        text-align: left;
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        > div:first-child {
-          flex: 1;
-          flex-shrink: 0;
-          color: #999;
-        }
-        > div:last-child {
-          flex: 1;
-          flex-shrink: 0;
-          color: #ff9900;
+        align-items: stretch;
+        flex-direction: column;
+        flex: 1;
+        > div {
+          padding: 6px 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          > div:first-child {
+            flex-shrink: 0;
+            color: #999;
+          }
+          > div:last-child {
+            flex: 1;
+            flex-shrink: 0;
+            color: #ff9900;
+          }
         }
       }
     }
@@ -225,68 +256,55 @@
         <load-animate v-if="loader"></load-animate>
         <div v-else>
           <div v-for="(item,index) in list" :key="index" @click="getDetail(item)" class="line-customers">
-            <div class="td">
-              <div>
-                <div>客户名称：</div>
-                <div>{{item.name}}</div>
-              </div>
-              <div>
-                <div>客户类别</div>
-                <div>{{item.role_name}}</div>
-              </div>
-              <div>
-                <div>投放时间：</div>
-                <div>{{item.updated_at | formatTimeStr('YYYY-MM-DD')}}</div>
-              </div>
-              <div>
-                <div>设备数：</div>
-                <div>{{item.device_num}}</div>
-              </div>
-              <div>
-                <div>激活率：</div>
-                <div>{{item.active_device_rate||0}}%</div>
-              </div>
-              <div>
-                <div>近一天活率：</div>
-                <div>{{item.recent_active_rate||0}}%</div>
-              </div>
-              <div>
-                <div>近一天使用率：</div>
-                <div>{{item.recent_use_rate||0}}%</div>
-              </div>
+            <div class="title-name">
+              <div class="cust-name">{{item.name}}  <span class="data-num">设备数：<span class="red">{{item.device_num||0}}</span></span></div>
+              <div class="cust-type">{{item.role_name}}</div>
             </div>
-            <div class="td">
-              <div>
-                <div>联系人：</div>
-                <div>{{item.contact}}</div>
+            <div class="tr-body">
+              <div class="td">
+                <div>
+                  <div>联系人：</div>
+                  <div>{{item.contact}}</div>
+                </div>
+                <div>
+                  <div>时间：</div>
+                  <div>{{item.updated_at | formatTimeStr('YYYY-MM-DD')}}</div>
+                </div>
+                <div>
+                  <div>设备数：</div>
+                  <div>{{item.device_num}}</div>
+                </div>
+                <div>
+                  <div>24H使用率：</div>
+                  <div>{{item.recent_use_rate||0}}%</div>
+                </div>
+                <div>
+                  <div>维护人员：</div>
+                  <div>{{item.manitenancename}}</div>
+                </div>
               </div>
-              <div>
-                <div>联系电话：</div>
-                <div>{{item.phone}}</div>
-              </div>
-              <div>
-                <div>联系地址：</div>
-                <div>{{ area(item.area)}}</div>
-              </div>
-              <div>
-                <div>维护人员：</div>
-                <div>{{item.manitenancename}}</div>
-              </div>
-              <div>
-                <div>营业额：</div>
-                <div>{{item.operate_money}}</div>
-              </div>
-              <div>
-                <div>未结算：</div>
-                <div>{{item.unclear_money}}</div>
-              </div>
-              <div>
-                <div>已结算：</div>
-                <div>{{item.clear_money}}</div>
-              </div>
-              <div>
-                <div>分成比例：</div>
-                <div>{{item.rate_value||0}}%</div>
+              <div class="td">
+                <div>
+                  <div>联系电话：</div>
+                  <div>{{item.phone}}</div>
+                </div>
+                <div>
+                  <div>联系地址：</div>
+                  <div>{{ area(item.area)}}</div>
+                </div>
+                <div>
+                  <div>营业额：</div>
+                  <div>{{item.operate_money}}</div>
+                </div>
+                <div>
+                  <div>24H激活率：</div>
+                  <div>{{item.recent_active_rate||0}}%</div>
+                </div>
+
+                <div>
+                  <div>分成比例：</div>
+                  <div>{{item.rate_value||0}}%</div>
+                </div>
               </div>
             </div>
           </div>

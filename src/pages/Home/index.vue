@@ -87,7 +87,7 @@
       }
       .line-block {
         text-align: left;
-        padding: 18px 10px;
+        padding: 18px 0;
         font-size: 32px;
         display: flex;
         justify-content: space-between;
@@ -125,10 +125,10 @@
             <div class="line-block">今日营业额 <span class="red">{{todayTotaol|| 0}}</span></div>
             <div class="line-block">总设备数<span class="red">{{myDate.total_devices_num||0}}</span></div>
             <div class="line-block">已绑定设备数<span class="red">{{myDate.total_devices_binded||0}}</span></div>
-            <div class="line-block">设备总激活数<span class="red">{{totalNum.total_active_device_num|| 0  }}</span></div>
-            <div class="line-block">24小时内激活率<span class="red">{{totalNum.total_recent_active_rate ||0 }}%</span></div>
-            <div class="line-block">近一天使用率<span class="red">{{totalNum.total_recent_use_rate  || 0 }}%</span></div>
-            <div class="line-block">总使用率 <span class="red">{{totalNum.total_everyday_use_rate || 0  }}%</span></div>
+            <div class="line-block">设备总激活数<span class="red">{{myDate.total_active_device_num|| 0  }}</span></div>
+            <div class="line-block">24H激活率<span class="red">{{todayTotaol.total_recent_active_rate ||0 }}%</span></div>
+            <div class="line-block">24H使用率<span class="red">{{myDate.total_recent_use_rate  || 0 }}%</span></div>
+            <div class="line-block">总使用率 <span class="red">{{myDate.total_everyday_use_rate || 0  }}%</span></div>
           </div>
         </div>
       </div>
@@ -189,7 +189,6 @@
           this.loader = false
           this.sevenDate = res.data
           let today = format(new Date(), 'YYYY-MM-DD')
-
           Object.keys(this.sevenDate).map(item => {
             if (item == today) {
               this.todayTotaol = this.sevenDate[item]

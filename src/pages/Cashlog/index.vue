@@ -13,7 +13,7 @@
   }
   .header {
     padding: 24px 32px;
-    background: #4FB2EF;
+    background: #3388ff;
     color: #fff;
     font-size: 32px;
     position: relative;
@@ -30,7 +30,6 @@
       right: 0;
       width: 140px;
       height: 100%;
-      background: #ff9900;
       color: #fff;
       text-align: right;
       padding: 0 20px;
@@ -41,7 +40,6 @@
       font-size: 28px;
     }
   }
-
   .scroll-wrap {
     flex: 1;
     overflow: hidden;
