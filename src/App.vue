@@ -60,5 +60,7 @@
   .blod{
     font-weight: 700 !important;
   }
-
+  .blue{
+     color:#738ae6 !important;
+  }
 </style>

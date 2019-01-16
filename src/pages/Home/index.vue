@@ -73,18 +73,28 @@
     font-size: 28px;
     .block-title {
       padding: 24px 32px;
-      background: #ef4300;
+      background: #738ae6;
       color: #fff;
       text-align: left;
     }
     .block-body {
       padding: 24px 32px;
-      .types {
-        font-size: 30px;
-        text-align: left;
-        border-bottom: 5px solid #FF0543;
-        padding-bottom: 14px;
+      .header-select{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        .types {
+          font-size: 30px;
+          text-align: left;
+          padding-bottom: 14px;
+          margin-right: 20px;
+        }
+        .active{
+          color:#ef4300;
+          border-bottom: 5px solid #ef4300;
+        }
       }
+
       .line-block {
         text-align: left;
         padding: 18px 0;
@@ -97,6 +107,41 @@
         }
       }
     }
+  }
+  .echart-wrap{
+    width:100%;
+    padding-top:50px;
+    min-height: 800px;
+    .echart{
+      width: 100%;
+    }
+  }
+  .wel-gragh{
+    list-style: none;
+    margin: 0;
+    padding:0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .wel-gragh li{
+    width: 100%;
+    box-sizing: border-box;
+    height: 415px;
+    overflow: auto;
+    -webkit-overflow-scrolling : touch;
+    margin-bottom: 15px;
+    padding-top: 15px;
+    background: white;
+  }
+  .wel-gragh li:nth-child(odd){
+    padding-right: 8px;
+  }
+  .wel-gragh li:nth-child(even){
+    padding-left: 8px;
+  }
+  #first{
+    height: 400px;
   }
 </style>
 <template>
@@ -114,24 +159,35 @@
       </div>
     </div>
     <load-animate v-if="loader"></load-animate>
-    <div v-else class="footer-body">
+    <div class="footer-body">
       <div class="content-blok">
         <div class="block-title">我的产品</div>
         <div class="block-body">
           <div>
-            <h4 class="types">骏宝闪充</h4>
-            <div class="line-block">我的客户<span class="red">{{myDate.total|| 0 }}</span></div>
-            <div class="line-block">总营业额<span class="red">{{myDate.all_money||0 }}</span></div>
-            <div class="line-block">今日营业额 <span class="red">{{todayTotaol|| 0}}</span></div>
-            <div class="line-block">总设备数<span class="red">{{myDate.total_devices_num||0}}</span></div>
-            <div class="line-block">已绑定设备数<span class="red">{{myDate.total_devices_binded||0}}</span></div>
-            <div class="line-block">设备总激活数<span class="red">{{myDate.total_active_device_num|| 0  }}</span></div>
-            <div class="line-block">24H激活率<span class="red">{{todayTotaol.total_recent_active_rate ||0 }}%</span></div>
-            <div class="line-block">24H使用率<span class="red">{{myDate.total_recent_use_rate  || 0 }}%</span></div>
-            <div class="line-block">总使用率 <span class="red">{{myDate.total_everyday_use_rate || 0  }}%</span></div>
+            <div class="header-select">
+              <h4 class="types" :class="{active:this.currentActive=='0'}" @click="currentActive='0'">骏宝闪充</h4>
+              <h4 class="types" :class="{active:this.currentActive=='1'}" @click="currentActive='1'">近7天营业额</h4>
+            </div>
+            <div v-if="currentActive=='0'">
+              <div class="line-block">我的客户<span class="blue">{{myDate.total|| 0 }}</span></div>
+              <div class="line-block">总营业额<span class="blue">{{myDate.all_money||0 }}</span></div>
+              <div class="line-block">今日营业额 <span class="blue">{{todayTotaol|| 0}}</span></div>
+              <div class="line-block">总设备数<span class="blue">{{myDate.total_devices_num||0}}</span></div>
+              <div class="line-block">已绑定设备数<span class="blue">{{myDate.total_devices_binded||0}}</span></div>
+              <div class="line-block">设备总激活数<span class="blue">{{myDate.total_active_device_num|| 0  }}</span></div>
+              <div class="line-block">24H激活率<span class="blue">{{todayTotaol.total_recent_active_rate ||0 }}%</span></div>
+              <div class="line-block">24H使用率<span class="blue">{{myDate.total_recent_use_rate  || 0 }}%</span></div>
+              <!--<div class="line-block">总使用率 <span class="blue">{{myDate.total_everyday_use_rate || 0  }}%</span></div>-->
+            </div>
+            <div class="echart-wrap"   v-if="currentActive=='1'">
+                  <h-chart class="echart" :id="idFirst"  :option="optionColumn" ref="echartDom"></h-chart>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <div>
+
     </div>
   </div>
 </template>
@@ -140,13 +196,131 @@
   import {mertj, myAgents, getDateData} from '../../server/junbao'
   import loadAnimate from '@/components/loadanimate'
   import {format} from 'date-fns'
-
+  import HChart from '@/components/Chart/HChart.vue';
   export default {
     components: {
-      loadAnimate
+      loadAnimate,
+      HChart
     },
     data() {
+      let optionColumn = {
+        chart: {
+          type: 'column'
+        },
+        title: {
+          text: '过去七天消费量趋势',
+        },
+        xAxis: {
+          categories: [],
+          crosshair: true
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: '消费量 (元)'
+          }
+        },
+        legend: {
+          align: 'center',
+          x: 30,
+          verticalAlign: 'top',
+          y: 25,
+          floating: true,
+          backgroundColor: 'white',
+          shadow: false
+        },
+        tooltip: {
+          formatter: function () {
+            return this.x + '<br/>消费总金额：' + this.y + '元';
+          }
+        },
+        plotOptions: {
+          column: {
+            borderWidth: 0
+          },
+          series: {
+            dataLabels: {
+              enabled: true,
+              formatter: function () {
+                return this.y + "元";
+              }
+            },
+          }
+        },
+        series: [{
+          name: '消费总金额',
+          data: []
+        }],
+        credits: {
+          enabled: false     //不显示LOGO
+        }
+      };
+      let optionPie = {
+        chart: {
+          plotBackgroundColor: null,
+          plotBorderWidth: null,
+          plotShadow: false,
+          type: 'pie'
+        },
+        title: {
+          text: '2018年1月浏览器市场份额'
+        },
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+              style: {
+                color: 'black'
+              }
+            }
+          }
+        },
+        series: [{
+          name: 'Brands',
+          colorByPoint: true,
+          data: [{
+            name: 'Chrome',
+            y: 61.41,
+            sliced: true,
+            selected: true
+          }, {
+            name: 'Internet Explorer',
+            y: 11.84
+          }, {
+            name: 'Firefox',
+            y: 10.85
+          }, {
+            name: 'Edge',
+            y: 4.67
+          }, {
+            name: 'Safari',
+            y: 4.18
+          }, {
+            name: 'Sogou Explorer',
+            y: 1.64
+          }, {
+            name: 'Opera',
+            y: 1.6
+          }, {
+            name: 'QQ',
+            y: 1.2
+          }, {
+            name: 'Other',
+            y: 2.61
+          }]
+        }]
+      };
       return {
+        idFirst: 'first',
+        isloader:false,
+        optionColumn: optionColumn,
+        optionPie: optionPie,
         totalNum: {},
         searchData: {
           role: '',
@@ -157,7 +331,37 @@
         myDate: {},
         sevenDate: {},
         todayTotaol: '0',
-        loader: true
+        loader: true,
+        currentActive:'0',
+        myChart:null,
+        uid:'0',
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
       }
     },
     mounted() {
@@ -185,7 +389,8 @@
         })
         this.checkToken(async () => {
           this.loader = true
-          let res = await getDateData()
+          this.uid = this.$store.state.userInfo.id
+          let res = await getDateData(this.uid)
           this.loader = false
           this.sevenDate = res.data
           let today = format(new Date(), 'YYYY-MM-DD')
@@ -194,6 +399,7 @@
               this.todayTotaol = this.sevenDate[item]
             }
           })
+          this.initEcharts(res.data)
         })
       },
       LevelName() {
@@ -205,6 +411,17 @@
         } else if (type == 'operate') {
           return '运营'
         }
+      },
+      initEcharts(data){
+        this.isloader=true
+        let categories = [];
+        let datas = [];
+        for(let key in data){
+          categories.push(key);
+          datas.push(data[key]);
+        }
+        this.optionColumn.xAxis.categories = categories;
+        this.optionColumn.series[0].data = datas;
       }
     }
   }

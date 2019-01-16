@@ -13,7 +13,7 @@
   }
   .header {
     padding: 24px 32px;
-    background: #3388ff;
+    background: #738ae6;
     color: #fff;
     font-size: 32px;
     position: relative;
@@ -40,10 +40,15 @@
       font-size: 28px;
     }
   }
+  .customer-wrap{
+
+  }
   .scroll-wrap {
     flex: 1;
     overflow: hidden;
     flex-shrink: 0;
+    padding: 0 24px;
+    background: #eee;
   }
   .line-customers {
     border-bottom: 1px solid #ccc;
@@ -175,12 +180,12 @@
               @pullingUp="onPullingUp"
       >
         <load-animate v-if="loader"></load-animate>
-        <div>
+        <div class="customer-wrap">
           <div v-for="(item,index) in list" :key="index" @click="getDetail(item)" class="line-customers">
             <div class="td">
               <div>
                 <div class="cell-left">申请人：</div>
-                <div class="black blod">{{item.name}}</div>
+                <div class="blue blod">{{item.name}}</div>
               </div>
               <div>
                 <div  class="cell-left">银行卡信息：</div>
@@ -319,6 +324,9 @@
             }
           })
         }
+      },
+      getDetail(model){
+        console.log(model)
       }
     }
   }

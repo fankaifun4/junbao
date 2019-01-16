@@ -28,7 +28,7 @@
             selectIcon: require("../../assets/icon/mine02@2x.png")
           },
           {
-            text: "财务",
+            text: "报表",
             name: "money",
             toPath: "money",
             icon: require("../../assets/icon/quanzi.png"),

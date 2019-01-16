@@ -9,6 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     margin:0 auto;
     .logo-img{
       background: url("../../assets/logo.png") no-repeat;
@@ -19,8 +20,9 @@
       flex-shrink: 0;
     }
     .text{
-      width:340px;
+      width:540px;
       color:#fff;
+      margin-top:50px;
       text-shadow: 0 2px 4px rgba(0, 0, 0, .9);
       .cn{
         width: 100%;
@@ -65,21 +67,23 @@
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .1) inset;
     font-family: 'PT Sans', Helvetica, Arial, sans-serif;
     font-size: 32px;
-    color: #fff;
+    color: #333;
     text-shadow: 0 1px 2px rgba(0, 0, 0, .1);
     transition: all .2s;
+    padding-left:80px;
+    background: #fff;
   }
 
   input:-moz-placeholder {
-    color: #fff;
+    color: #aaa;
   }
 
   input:-ms-input-placeholder {
-    color: #fff;
+    color: #aaa;
   }
 
   input::-webkit-input-placeholder {
-    color: #fff;
+    color: #aaa;
   }
 
   input:focus {
@@ -99,13 +103,13 @@
     padding: 0 15px;
     line-height:80px;
     margin-top: 50px;
-    background: #ef4300;
+    background: transparent;
     border-radius: 6px;
-    border: 0px;
-    box-shadow: 0 15px 30px 0 rgba(255, 255, 255, .25) inset,
+    border: 1px solid rgba(255,255,255,.4);
+    box-shadow: 0 0 5px 0 rgba(255, 255, 255, .25) inset,
     0 2px 7px 0 rgba(0, 0, 0, .2);
     font-family: 'PT Sans', Helvetica, Arial, sans-serif;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 700;
     color: #fff;
     text-shadow: 0 1px 2px rgba(0, 0, 0, .1);
@@ -180,26 +184,57 @@
       background: url("../../assets/login/img/3.jpg");
       background-size: cover;
     }
+    &.bg5 {
+      background: url("../../assets/login/img/5.jpg");
+      background-size: cover;
+    }
+  }
+  .username{
+    background-image: url("../../assets/icon/user.png");
+    background-repeat: no-repeat;
+    background-position:20px center;
+    background-size: 40px 40px;
+  }
+  .password{
+    background-image: url("../../assets/icon/pwd.png");
+    background-repeat: no-repeat;
+    background-position: 20px center;
+    background-size: 40px 40px;
+  }
+  .footer{
+    position: absolute;
+    bottom: 50px;
+    color: #333;
+    width: 100%;
+    >div{
+      text-align: center;
+      font-size: 30px;
+      font-weight: 700;
+      width: 100%;
+    }
   }
 </style>
 <template>
-  <div class="wrapper" :class="timeSet">
+  <div class="wrapper bg5">
     <div class="page-container">
         <h1 class="logo">
           <div  class="logo-img"></div>
           <div  class="text">
-            <div class="cn">骏宝闪充<span></span></div>
-            <div class="en">Jun Bao Shan Chong<span></span></div>
+            <div class="cn">骏宝运营商管理端系统<span></span></div>
           </div>
         </h1>
         <div>
-          <input type="text" name="username" class="username" v-model="email" placeholder="请输入手机号码" autocomplete="off"/>
+          <input type="text"  name="username" class="username" v-model="email" placeholder="请输入手机号码" autocomplete="off"/>
         </div>
         <div>
-          <input type="password" name="password" class="password" v-model="password" placeholder="密码" oncontextmenu="return false"
+          <input type="password"  name="password" class="password" v-model="password" placeholder="密码" oncontextmenu="return false"
                  onpaste="return false"/>
         </div>
         <button id="submit" type="button"  @click="login">登录</button>
+    </div>
+    <div class="footer">
+      <div>4008-875-375</div>
+      <div>湖南骏宝信息科技有限公司</div>
     </div>
   </div>
 </template>

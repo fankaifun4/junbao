@@ -4,7 +4,7 @@ let domainUrl=''
 //
 if( process.env.NODE_ENV === 'development'){
   //开发环境
-  baseUrl = 'http://junbao.taodama.net'
+  baseUrl = 'http://wx.junbao518.com'
   domainUrl = 'http://junbao.taodama.net'
 
 }else{

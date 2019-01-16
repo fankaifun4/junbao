@@ -7,7 +7,7 @@
 
   .header {
     padding: 24px 32px;
-    background: #3388ff;
+    background: #738ae6;
     color: #fff;
     font-size: 32px;
     position: relative;
@@ -39,8 +39,9 @@
     flex: 1;
     overflow: hidden;
     flex-shrink: 0;
+    padding: 0 24px;
+    background: #eee;
   }
-
   .line-customers {
     border-bottom: 1px solid #ccc;
     font-size: 28px;
@@ -59,7 +60,7 @@
         overflow: hidden;
         font-weight: 700;
         padding-right: 20px;
-
+        color:#738ae6;
       }
       .data-num{
         font-weight: 300;
@@ -70,7 +71,7 @@
         flex-shrink: 0;
         font-size: 26px;
         font-weight: 300;
-        background: rgba(51,136,255,1);
+        background:#738ae6;
         border-radius: 6px;
         text-align: center;
         padding:10px 20px;
@@ -78,11 +79,21 @@
         line-height: 1;
       }
     }
+    .title-foot{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 24px;
+      padding:10px 20px;
+      >div{
+        display: flex;
+      }
+    }
     .tr-body{
       display: flex;
       justify-content: space-between;
       align-items: stretch;
-      font-size: 26px;
+      font-size: 24px;
       padding:0 24px;
       .td {
         flex-shrink: 0;
@@ -99,12 +110,12 @@
           align-items: flex-start;
           > div:first-child {
             flex-shrink: 0;
-            color: #999;
+            color: #666;
           }
           > div:last-child {
             flex: 1;
             flex-shrink: 0;
-            color: #ff9900;
+            color: #666;
           }
         }
       }
@@ -254,57 +265,66 @@
               @pullingUp="onPullingUp"
       >
         <load-animate v-if="loader"></load-animate>
-        <div v-else>
+        <div v-else class="customer-wrap">
           <div v-for="(item,index) in list" :key="index" @click="getDetail(item)" class="line-customers">
             <div class="title-name">
-              <div class="cust-name">{{item.name}}  <span class="data-num">设备数：<span class="red">{{item.device_num||0}}</span></span></div>
+              <div class="cust-name">{{item.name}}</div>
               <div class="cust-type">{{item.role_name}}</div>
             </div>
             <div class="tr-body">
               <div class="td">
                 <div>
+                  <div>时间：</div>
+                  <div>{{item.updated_at | formatTimeStr('YYYY-MM-DD')}}</div>
+                </div>
+
+                <div>
                   <div>联系人：</div>
                   <div>{{item.contact}}</div>
                 </div>
                 <div>
-                  <div>时间：</div>
-                  <div>{{item.updated_at | formatTimeStr('YYYY-MM-DD')}}</div>
-                </div>
-                <div>
-                  <div>设备数：</div>
-                  <div>{{item.device_num}}</div>
-                </div>
-                <div>
-                  <div>24H使用率：</div>
-                  <div>{{item.recent_use_rate||0}}%</div>
-                </div>
-                <div>
-                  <div>维护人员：</div>
-                  <div>{{item.manitenancename}}</div>
-                </div>
-              </div>
-              <div class="td">
-                <div>
-                  <div>联系电话：</div>
-                  <div>{{item.phone}}</div>
-                </div>
-                <div>
-                  <div>联系地址：</div>
+                  <div>地址：</div>
                   <div>{{ area(item.area)}}</div>
                 </div>
+                <div>
+                  <div>激活数：</div>
+                  <div>{{item.active_num}}</div>
+                </div>
+
+
+              </div>
+              <div class="td">
                 <div>
                   <div>营业额：</div>
                   <div>{{item.operate_money}}</div>
                 </div>
                 <div>
-                  <div>24H激活率：</div>
-                  <div>{{item.recent_active_rate||0}}%</div>
+                  <div>电话：</div>
+                  <div>{{item.phone}}</div>
                 </div>
 
                 <div>
-                  <div>分成比例：</div>
-                  <div>{{item.rate_value||0}}%</div>
+                  <div>设备数：</div>
+                  <div>{{item.device_num||0}}</div>
                 </div>
+                <div>
+                  <div>24H激活率：</div>
+                  <div>{{item.recent_active_rate||0}}%</div>
+                </div>
+              </div>
+            </div>
+            <div class="title-foot">
+              <div>
+                <div>维护人：</div>
+                <div>{{item.manitenancename}}</div>
+              </div>
+              <div>
+                <div>分成：</div>
+                <div>{{item.rate_value||0}}%</div>
+              </div>
+              <div>
+                <div>24H使用率：</div>
+                <div>{{item.recent_use_rate||0}}%</div>
               </div>
             </div>
           </div>
