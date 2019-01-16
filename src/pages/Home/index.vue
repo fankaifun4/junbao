@@ -494,6 +494,11 @@
       },
       getMoney(){
         var that = this;
+        let rgx = /^([1-9]{1})(\d{14}|\d{18})$/;
+        if(  !rgx.test( Number(this.userInfo.bank_number) )  ){
+          alert('请设置正确的银行卡号')
+          return
+        }
         if(Number(this.moneyData.rest_money)<10){
           alert('提现金额必须大于10元')
           return
