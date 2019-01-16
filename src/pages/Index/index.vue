@@ -29,8 +29,8 @@
           },
           {
             text: "报表",
-            name: "money",
-            toPath: "money",
+            name: "deviceconsume",
+            toPath: "deviceconsume",
             icon: require("../../assets/icon/quanzi.png"),
             selectIcon: require("../../assets/icon/quanzi1.png")
           },{

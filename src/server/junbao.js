@@ -26,3 +26,9 @@ export const admins = (page,num,search,roleid='all')=>http.get('/admins',{page,n
 
 //人物类型查询
 export const rolesLists=()=>http.get('/roles/lists',{privilege:read})
+
+//获取设备列表
+export const lists =()=>http.get('/admins/lists',{privilege:read})
+
+//设备消费流水
+export const consume=( searchData,page,num )=>http.get('/devices/consume',{...searchData,page,num,privilege:read})

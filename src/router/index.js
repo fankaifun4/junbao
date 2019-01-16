@@ -5,6 +5,7 @@ const Home = () => import(/* webpackChunkName: "Home" */ '@/pages/Home')
 const User = () => import(/* webpackChunkName: "User" */ '@/pages/User')
 const Turnover = () => import(/* webpackChunkName: "Turnover" */ '@/pages/Turnover')
 const Customers = () => import(/* webpackChunkName: "Customers" */ '@/pages/Customers')
+const DeviceConsume = () => import(/* webpackChunkName: "Customers" */ '@/pages/Finance/DeviceConsume')
 const Money = () => import(/* webpackChunkName: "Customers" */ '@/pages/Cashlog')
 const Login = () => import(/* webpackChunkName: "Login" */ '@/pages/Login')
 Vue.use(Router)
@@ -32,9 +33,9 @@ export default new Router({
           component: Customers
         },
         {
-          path: 'cashlog',
-          name: 'money',
-          component: Money
+          path: 'deviceconsume',
+          name: 'deviceconsume',
+          component: DeviceConsume
         }
       ]
     },
@@ -53,6 +54,6 @@ export default new Router({
       name: 'login',
       component: Login
     },
-   
+
   ]
 })

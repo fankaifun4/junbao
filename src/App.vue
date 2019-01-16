@@ -63,4 +63,13 @@
   .blue{
      color:#738ae6 !important;
   }
+  .wait{
+    color: #ff9900  !important;
+  }
+  .agree{
+    color: #090  !important;
+  }
+  .freeze{
+    color: #f00  !important;
+  }
 </style>

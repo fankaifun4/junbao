@@ -1,5 +1,7 @@
 <style scoped lang='less'>
-
+  .assessment{
+    position: relative;
+  }
   .top-container {
     flex-shrink: 0;
     padding-top: 50px;
@@ -143,9 +145,44 @@
   #first{
     height: 400px;
   }
+  .cash-top{
+    padding:15px 0;
+    z-index: 99;
+    font-size: 32px;
+    div{
+      display: flex;
+      align-items: center;
+      padding:8px 0;
+      span{
+        padding:0 15px;
+      }
+    }
+  }
+  .tixian{
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    min-height: 800px;
+    .button{
+      color: #333;
+      padding:24px 32px;
+      border: none;
+      border-radius: 6px;
+      outline: none;
+      font-size: 26px;
+      border:none;
+      background: transparent;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
+  }
+  .mr-30{
+    margin-right: 30px;
+  }
 </style>
 <template>
-  <div class="assessment">
+  <div class="assessment flex-w-c">
     <div class="top-container">
       <div class="userinfo">
         <div class="avart">
@@ -167,6 +204,7 @@
             <div class="header-select">
               <h4 class="types" :class="{active:this.currentActive=='0'}" @click="currentActive='0'">骏宝闪充</h4>
               <h4 class="types" :class="{active:this.currentActive=='1'}" @click="currentActive='1'">近7天营业额</h4>
+              <h4 class="types" :class="{active:this.currentActive=='2'}" @click="currentActive='2'">我的钱包</h4>
             </div>
             <div v-if="currentActive=='0'">
               <div class="line-block">我的客户<span class="blue">{{myDate.total|| 0 }}</span></div>
@@ -182,18 +220,37 @@
             <div class="echart-wrap"   v-if="currentActive=='1'">
                   <h-chart class="echart" :id="idFirst"  :option="optionColumn" ref="echartDom"></h-chart>
             </div>
+            <div class="echart-wrap"   v-if="currentActive=='2'">
+              <div class="cash-top">
+                <div>
+                  <div>可用余额</div>
+                  <div class="mr-30"><span class="red">{{moneyData.rest_money||0}}</span>元</div>
+                </div>
+                <div>
+                  <div>冻结金额</div>
+                  <div><span class="red">{{moneyData.freeze_money||0}}</span>元</div>
+                </div>
+                <div>
+                  <div>已提现金额</div>
+                  <div><span class="green">{{moneyData.take_money||0}}</span>元</div>
+                </div>
+
+              </div>
+              <div class="tixian">
+                <button class="button" :disabled="this.moneyData.rest_money<=0"
+                        v-if="this.moneyData.freeze_money <=0 && this.moneyData.rest_money > 0&& $store.state.userInfo.type=='agent'&& $store.state.userInfo.level<4"
+                        @click="getMoney">提现</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div>
-
     </div>
   </div>
 </template>
 <script>
   import {mapState} from 'vuex'
-  import {mertj, myAgents, getDateData} from '../../server/junbao'
+  import {mertj, myAgents, getDateData,moneyTotal} from '../../server/junbao'
   import loadAnimate from '@/components/loadanimate'
   import {format} from 'date-fns'
   import HChart from '@/components/Chart/HChart.vue';
@@ -330,6 +387,7 @@
         },
         myDate: {},
         sevenDate: {},
+        moneyData:{},
         todayTotaol: '0',
         loader: true,
         currentActive:'0',
@@ -366,6 +424,7 @@
     },
     mounted() {
       this.initData()
+      this.getMoneyData()
     },
     computed: {
       ...mapState([
@@ -402,6 +461,16 @@
           this.initEcharts(res.data)
         })
       },
+      getMoneyData () {
+        let uid = this.userInfo.id
+        this.uid = uid
+        this.checkToken(async () => {
+          let res = await moneyTotal(uid)
+          if (res.data) {
+            this.moneyData = res.data
+          }
+        })
+      },
       LevelName() {
         let type = this.userInfo.type
         if (type == 'manitenance') {
@@ -422,6 +491,31 @@
         }
         this.optionColumn.xAxis.categories = categories;
         this.optionColumn.series[0].data = datas;
+      },
+      getMoney(){
+        var that = this;
+        if(Number(this.moneyData.rest_money)<10){
+          alert('提现金额必须大于10元')
+          return
+        }
+        let alertText = '你申请的提现金额为【'+Number(this.moneyData.rest_money)+'】元,微信支付将扣取到账手续费 【'+(Number(this.moneyData.rest_money)*0.007).toFixed(2)+'】 元,您的实际提现金额为 【'+(Number(this.moneyData.rest_money)-Number(this.moneyData.rest_money)*0.007).toFixed(2)+'】 元'
+        var isCharge = confirm(alertText)
+        if(isCharge) {
+          checkToken(async () => {
+            that.loading = true;
+            let takemoney = await  takecash(that.moneyData.rest_money)
+            if (takemoney) {
+              that.loading = false;
+              that.freeze_money = that.rest_money;
+              that.rest_money = 0;
+              Message.success('提交成功');
+              that.onPullingDown();
+            } else {
+              that.loading = false;
+              Message.warning('未知错误');
+            }
+          })
+        }
       }
     }
   }

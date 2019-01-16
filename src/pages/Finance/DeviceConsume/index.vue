@@ -27,7 +27,7 @@
       color: #fff;
       text-align: right;
       padding: 0 20px;
-      background: url("../../assets/icon/search.png") no-repeat center left;
+      background: url("../../../assets/icon/search.png") no-repeat center left;
       background-size: 40px 40px;
       border: none;
       outline: none;
@@ -213,41 +213,40 @@
     color: #999;
     font-weight: 700;
   }
+
 </style>
 <template>
   <div class="assessment flex-w-c">
     <div class="header">
-      <div class="title">我的客户</div>
+      <div class="title">设备消费流水</div>
       <button class="search" @click="openSearch=!openSearch">搜索</button>
     </div>
     <div class="search-shape" @click="openSearch=false" :class="{visiable:openSearch}"></div>
     <div class="search-body" v-if="openSearch" >
       <div>
-        <label for="">按类型：</label>
-        <i-select placeholder="设备类型" class="select" v-model="searchData.role">
+        <label for="">我运营的设备：</label>
+        <i-select placeholder="设备类型" class="select" v-model="searchData.uid">
           <i-option value="">全部类型</i-option>
-          <i-option value="2">运营</i-option>
-          <i-option value="3" :disabled="!($store.state.userInfo.type =='admin')">财务</i-option>
-          <i-option value="4">代理商</i-option>
-          <i-option value="5" :disabled="!($store.state.userInfo.type =='admin')">直营客户</i-option>
-          <i-option value="6">商家</i-option>
-          <i-option value="7">维护人员</i-option>
+          <i-option v-for="(item,index) in  typeList" :key="index" :value="item.id">{{item.name}}</i-option>
         </i-select>
       </div>
       <div>
-        <label for="">按市场维护人员：</label>
-        <i-select placeholder="全部人员" class="select" v-model="searchData.manid">
-          <i-option value="">全部人员</i-option>
-          <i-option v-for="(item,index) in  manitenance" :key="index" :value="item.id">{{item.name}}</i-option>
+        <label for="">按类型：</label>
+        <i-select placeholder="全部人员" class="select" v-model="searchData.type">
+          <i-option value="all">全部类型</i-option>
+          <i-option v-for="(item,index) in  typeOptions" :key="index" :value="item.id">{{item.name}}</i-option>
+        </i-select>
+      </div>
+      <div>
+        <label for="">按品牌：</label>
+        <i-select placeholder="全部人员" class="select" v-model="searchData.brand">
+          <i-option value="all">全部品牌</i-option>
+          <i-option v-for="(item,index) in  brandOptions" :key="index" :value="item.id">{{item.name}}</i-option>
         </i-select>
       </div>
       <div>
         <label for="">按名称：</label>
         <div><input class="input" type="text" maxlength="20" v-model="searchData.search"></div>
-      </div>
-      <div>
-        <label for="">按地区：</label>
-        <div><input class="input" type="text" maxlength="20" v-model="searchData.city"></div>
       </div>
     </div>
     <load-animate v-if="loader"></load-animate>
@@ -265,69 +264,56 @@
               @pullingDown="onPullingDown"
               @pullingUp="onPullingUp"
       >
-
-        <div class="customer-wrap">
+        <div  class="customer-wrap ">
           <div v-for="(item,index) in list" :key="index" @click="getDetail(item)" class="line-customers">
             <div class="title-name">
-              <div class="cust-name">{{item.name}}</div>
-              <div class="cust-type">{{item.role_name}}</div>
+              <div class="cust-name">{{item.username}}</div>
+              <div class="cust-type">{{item.created_at }}</div>
             </div>
             <div class="tr-body">
               <div class="td">
                 <div>
-                  <div>时间：</div>
-                  <div>{{item.updated_at | formatTimeStr('YYYY-MM-DD')}}</div>
-                </div>
-
-                <div>
-                  <div>联系人：</div>
-                  <div>{{item.contact}}</div>
+                  <div>设备类型：</div>
+                  <div>{{item.type}}</div>
                 </div>
                 <div>
-                  <div>地址：</div>
-                  <div>{{ area(item.area)}}</div>
+                  <div>设备品牌：</div>
+                  <div>{{item.brand}}</div>
                 </div>
                 <div>
-                  <div>激活数：</div>
-                  <div>{{item.active_num}}</div>
+                  <div>金额（元）：</div>
+                  <div>{{item.money}}</div>
                 </div>
-
 
               </div>
               <div class="td">
                 <div>
-                  <div>营业额：</div>
-                  <div>{{item.operate_money}}</div>
+                  <div>设备编号：</div>
+                  <div>{{item.sn}}</div>
                 </div>
                 <div>
-                  <div>电话：</div>
-                  <div>{{item.phone}}</div>
-                </div>
-
-                <div>
-                  <div>设备数：</div>
-                  <div>{{item.device_num||0}}</div>
+                  <div>消费科目：</div>
+                  <div>{{item.tpl_name}}</div>
                 </div>
                 <div>
-                  <div>24H激活率：</div>
-                  <div>{{item.recent_active_rate||0}}%</div>
+                  <div>结算状态：</div>
+                  <div class="status" :class="item.cash_status == 0 ? 'wait' : item.cash_status == 2 ? 'agree' : 'freeze'">{{item.cash_status == 1 ? '已冻结' : item.cash_status == 2 ? '已结算' : '未结算'}}</div>
                 </div>
               </div>
             </div>
             <div class="title-foot">
               <div>
-                <div>维护人：</div>
-                <div>{{item.manitenancename}}</div>
-              </div>
-              <div>
-                <div>分成：</div>
-                <div>{{item.rate_value||0}}%</div>
-              </div>
-              <div>
-                <div>24H使用率：</div>
-                <div>{{item.recent_use_rate||0}}%</div>
+                <div>订单号：</div>
+                <div>{{item.orderid}}</div>
               </div>
             </div>
+            <div class="title-foot">
+              <div>
+                <div>微信流水号：</div>
+                <div>{{item.pay_no}}</div>
+              </div>
+            </div>
+
           </div>
         </div>
       </scroll>
@@ -336,31 +322,36 @@
 </template>
 <script>
   import Vue from 'vue'
-  import {myAgents} from '../../server/junbao.js'
+  import {lists,consume} from '../../../server/junbao.js'
   import Scroll from '@/components/scroll/scroll'
   import loadAnimate from '@/components/loadanimate'
-  import Detail from './detail'
   import {debounce} from 'lodash'
-  import {Select, Option} from 'iview'
-
+  import {Select, Option,DatePicker } from 'iview'
+  import { mapState } from 'vuex'
   Vue.component('i-select', Select);
   Vue.component('i-option', Option);
+  Vue.component('date-picker', DatePicker);
   export default {
     components: {
       Scroll,
-      Detail,
       loadAnimate
+    },
+    computed: {
+      ...mapState([ 'typeOptions', 'brandOptions','userInfo']),
     },
     data() {
       return {
         loader:true,
         pageIndex: 1,
-        pageSize: 5,
+        pageSize: 20,
         searchData: {
-          role: '',
-          city: '',
-          manid: '',
-          search: ''
+          type: 'all',
+          brand: 'all',
+          start: '',
+          search:'',
+          uid:'',
+          end:'',
+          uid: ''
         },
         list: [],
         _isDestroyed: false,
@@ -368,27 +359,20 @@
         manitenance: [],
         debounce: null,
         openSearch: false,
-        isNodata:''
+        isNodata:'',
+        typeList:[]
       }
     },
     mounted() {
+      this.searchData.uid = this.userInfo.id
       this.getData()
-      this.getManitenance()
+      this.getList()
       this.debounce = debounce(() => {
         this.onPullingDown()
       }, 400)
     },
     methods: {
-      area(addr) {
-        let address = JSON.parse(addr)
-        return (address[0] || '') + (address[1] || '')
-      },
-      async getManitenance() {
-        let res = await myAgents(0, 0, this.searchData)
-        if (res.data.data) {
-          this.manitenance = res.data.manitenance || []
-        }
-      },
+
       getData() {
         if (this._isDestroyed) {
           if (this.$refs.scroll) {
@@ -398,7 +382,7 @@
         }
         this.checkToken(async () => {
           try{
-            let res = await myAgents(this.pageIndex, this.pageSize, this.searchData)
+            let res = await consume( this.searchData,this.pageIndex, this.pageSize)
             this.loader=false
             if (res.data.data) {
               this.noData = false
@@ -407,7 +391,7 @@
                 this._isDestroyed = true
                 if (this.$refs.scroll) {
                   this.$nextTick(() => {
-                    this.$refs.scroll.forceUpdate()
+                    this.$refs.scroll&&this.$refs.scroll.forceUpdate()
                   })
                 }
                 if (this.pageIndex == 1 && len < 1) {
@@ -429,6 +413,19 @@
 
         })
       },
+      getList(){
+        this.loader=true
+        this.checkToken(async ()=>{
+          try{
+            let res = await lists()
+            this.loader=false
+            this.typeList =  res.data.list
+          }catch (e) {
+            this.loader=false
+          }
+
+        })
+      },
       onPullingDown() {
         this.pageIndex = 1
         this.list = []
@@ -445,13 +442,13 @@
       }
     },
     watch: {
-      'searchData.role'() {
+      'searchData.type'() {
         this.debounce()
       },
-      'searchData.city'() {
+      'searchData.brand'() {
         this.debounce()
       },
-      'searchData.manid'() {
+      'searchData.uid'() {
         this.debounce()
       },
       'searchData.search'() {
