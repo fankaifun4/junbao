@@ -189,7 +189,6 @@
           <img src="../../assets/icon/man.png" alt="">
         </div>
         <div>
-          <div class="user-level" v-if="userInfo.type=='agent'"> {{LevelName()}}</div>
           <h4 class="user-type"> {{userInfo.name}}</h4>
           <div class="user-type">账号：{{userInfo.email}}</div>
         </div>
@@ -213,7 +212,7 @@
               <div class="line-block">总设备数<span class="blue">{{myDate.total_devices_num||0}}</span></div>
               <div class="line-block">已绑定设备数<span class="blue">{{myDate.total_devices_binded||0}}</span></div>
               <div class="line-block">设备总激活数<span class="blue">{{myDate.total_active_device_num|| 0  }}</span></div>
-              <div class="line-block">24H激活率<span class="blue">{{todayTotaol.total_recent_active_rate ||0 }}%</span></div>
+              <div class="line-block">24H激活率<span class="blue">{{myDate.total_recent_active_rate ||0 }}%</span></div>
               <div class="line-block">24H使用率<span class="blue">{{myDate.total_recent_use_rate  || 0 }}%</span></div>
               <!--<div class="line-block">总使用率 <span class="blue">{{myDate.total_everyday_use_rate || 0  }}%</span></div>-->
             </div>
