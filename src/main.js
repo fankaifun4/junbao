@@ -11,6 +11,26 @@ import filters from './filters'
 Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
 Vue.prototype.checkToken = checkToken
 Vue.config.productionTip = false
+
+
+
+
+let  hasURL=function(url){
+  let userInfo = store.state.userInfo
+  let type = store.state.userInfo.type
+  let status =store.state.userInfo.status
+  let permission =  userInfo.roles[0].permissions
+  let  isTrue =false
+  for(var i=0;i<permission.length;i++){
+    if(permission[i].desc == url ){
+      isTrue=true
+      break
+    }
+  }
+  return isTrue
+}
+Vue.prototype.hasURL = hasURL
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

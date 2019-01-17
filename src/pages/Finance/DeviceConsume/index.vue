@@ -14,6 +14,7 @@
     height: 90px;
     box-shadow: 0 1px 15px 2px rgba(0, 0, 0, .1);
     z-index: 100;
+    display: flex;
     .title {
       text-align: left;
       font-weight: 700;
@@ -213,7 +214,13 @@
     color: #999;
     font-weight: 700;
   }
-
+  .heji{
+    color:#666;
+    font-weight: 700;
+    font-size: 35px;
+    text-align: left;
+    padding:12px 24px;
+  }
 </style>
 <template>
   <div class="assessment flex-w-c">
@@ -221,6 +228,7 @@
       <div class="title">设备消费流水</div>
       <button class="search" @click="openSearch=!openSearch">搜索</button>
     </div>
+    <div class="heji">合计金额：<span class="red">{{allmoney||0}}元</span></div>
     <div class="search-shape" @click="openSearch=false" :class="{visiable:openSearch}"></div>
     <div class="search-body" v-if="openSearch" >
       <div>
@@ -360,7 +368,8 @@
         debounce: null,
         openSearch: false,
         isNodata:'',
-        typeList:[]
+        typeList:[],
+        allmoney:0
       }
     },
     mounted() {
@@ -387,6 +396,7 @@
             if (res.data.data) {
               this.noData = false
               let len = res.data.data && res.data.data.length
+              this.allmoney = res.data.allmoney
               if (len < this.pageSize) {
                 this._isDestroyed = true
                 if (this.$refs.scroll) {

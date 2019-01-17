@@ -19,7 +19,18 @@
     data() {
       return {
         current: "customers",
-        nav: [
+        nav: []
+      }
+    },
+    mounted(){
+      if(this.$route.path.indexOf('customers')>-1){
+        this.current = 'customers'
+      }else{
+        this.current = this.$route.name
+      }
+      console.log( this.hasURL('admin/myagents')  )
+      if(this.hasURL('admin/myagents') ){
+        this.nav =  [
           {
             text: "客户",
             name: "customers",
@@ -41,20 +52,29 @@
             selectIcon: require("../../assets/icon/home01@2x.png")
           }
         ]
-      }
-    },
-    mounted(){
-      if(this.$route.path.indexOf('customers')>-1){
-        this.current = 'customers'
       }else{
-        this.current = this.$route.name
+        this.nav =  [
+          {
+            text: "报表",
+            name: "deviceconsume",
+            toPath: "deviceconsume",
+            icon: require("../../assets/icon/quanzi.png"),
+            selectIcon: require("../../assets/icon/quanzi1.png")
+          },{
+            text: "我的",
+            name: "home",
+            toPath: "home",
+            icon: require("../../assets/icon/home02@2x.png"),
+            selectIcon: require("../../assets/icon/home01@2x.png")
+          }
+        ]
       }
     },
     methods: {
       goPath(path) {
         this.$router.push({name: path.toPath})
         this.current = path.name
-      }
+      },
     },
     watch: {
       $route(to) {
